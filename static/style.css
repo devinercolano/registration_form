@@ -1,0 +1,48 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+form {
+    width: 130px;
+    margin: 0px 0px 0px 10px;
+    padding: 0px 0px 0px 0px;
+    display: block;
+
+}
+
+input{
+    display: inline-block;
+    margin: 10px 0px 10px 0px;
+    padding: 0px 0px 0px 0px;
+}
+
+select{
+    display: inline-block;
+    margin: 10px 0px 10px 0px;
+    padding: 0px 0px 0px 0px;
+}
+
+textarea {
+    display: block;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+
+.container{
+    width: 190px;
+}
+
+label{
+    display: inline-block
+}
+
+p{
+    display: inline-block;
+    margin: 10px 0px 0px 10px;
+}
+
+.title{
+    text-decoration: underline;
+    display: block;
+}
