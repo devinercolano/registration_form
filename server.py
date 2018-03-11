@@ -50,14 +50,12 @@ def submit():
     if session['password'] != session['confirmPassword'] :
       flash("Password confirmation and password entries must match!", 'error')
       error = True
-
-    m = passwordCharUppercaseRegEx.search(session['password'])
-    if not m :
+ 
+    if not passwordCharUppercaseRegEx.search(session['password']) :
       error = True
       flash("Password must contain at least 1 uppercase letter")
 
-    r = passwordNumRegEx.search(session['password'])
-    if not r :
+    if not passwordNumRegEx.search(session['password']) :
       error = True
       flash("Password must contain at least 1 number")    
 
