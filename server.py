@@ -14,10 +14,7 @@ def index():
   query = 'SELECT * FROM friends'
   friends = mysql.query_db(query)
 
-  print("user list", friends)
-  print("user list first name", friends[0]['first_name'])
-  print("user list message", friends[0]['last_name'])
-  print("user list id", friends[0]['id'])
+ 
 
   return render_template("/users.html", friend_list=friends)
 
