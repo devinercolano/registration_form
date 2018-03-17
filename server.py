@@ -1,67 +1,78 @@
 from flask import Flask, render_template, request, redirect, session, flash
+from mysqlconnection import MySQLConnector
 import re
 emailRegEx = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 passwordCharUppercaseRegEx = re.compile(r'[A-Z]+')
 passwordNumRegEx = re.compile(r'[0-9]+')
+
 app = Flask(__name__)
+mysql = MySQLConnector(app,'friendsdb')
 app.secret_key = 'KeepItSecretKeepItSafe'
 
-@app.route('/')
+@app.route('/users')
 def index():
-  return render_template("index.html")
+  query = 'SELECT * FROM friends'
+  friends = mysql.query_db(query)
 
-@app.route('/submit', methods=['POST'])
-def submit():
-    error = None
+  print("user list", friends)
+  print("user list first name", friends[0]['first_name'])
+  print("user list message", friends[0]['last_name'])
+  print("user list id", friends[0]['id'])
+
+  return render_template("/users.html", friend_list=friends)
+
+@app.route('/users/new', methods=['POST'])
+def addUser():
+    query = "SELECT * FROM friends"
+    friends_query = mysql.query_db(query)
+
+    errorFlag = False
     session['firstName'] = request.form['firstName']
     session['lastName'] = request.form['lastName']
     session['email'] = request.form['email']
-    session['password'] = request.form['password']
-    session['confirmPassword'] = request.form['confirmPassword']
 
-    if len(session['firstName']) < 1:
+    if len(session['firstName']) < 2:
       flash("first name cannot be empty!", 'error')
-      error = True
+      errorFlag = True
     elif session['firstName'].isalpha() == False :
       flash("First name must contain only alphabetic characters!", 'error')
-      error = True
+      errorFlag = True
     
-    if len(session['lastName']) < 1:
+    if len(session['lastName']) < 2:
       flash("Last name cannot be empty!", 'error')
-      error = True
+      errorFlag = True
     elif session['lastName'].isalpha() == False :
       flash("Last name must contain only alphabetic characters!", 'error')
-      error = True
+      errorFlag = True
 
     if len(session['email']) < 1:
       flash("email cannot be empty!", 'error')
-      error = True
+      errorFlag = True
     elif not emailRegEx.match(session['email']):
       flash("Invalid Email Address!")
-      error = True   
+      errorFlag = True   
 
-    if len(session['password']) < 1 :
-      flash("Password cannot be empty!", 'error')
-      error = True
-    elif len(session['password']) <= 8:
-      flash("Password must be longer than 8 characters")
-      error = True
+    for x  in friends_query:
+        if x['email'] == request.form['email'] :
+            flash("Error! Duplicate email", 'incorrect')
+            errorFlag = True
+            return render_template('index.html')
+    if errorFlag == True :
+      return redirect('/')      
 
-    if session['password'] != session['confirmPassword'] :
-      flash("Password confirmation and password entries must match!", 'error')
-      error = True
- 
-    if not passwordCharUppercaseRegEx.search(session['password']) :
-      error = True
-      flash("Password must contain at least 1 uppercase letter")
+    create_user(request)
+    return render_template('/users/new.html')
+    
+def create_user(request):
+  query = "INSERT INTO friends (email, first_name, last_name, created_at, updated_at) VALUES (:email, :first_name, :last_name, NOW(), NOW())"
+  data = {
+             'email'  : request.form['email'],
+             'first_name'     : request.form['firstName'],
+             'last_name'      : request.form['lastName'],
+            }
+  
+  new_user = mysql.query_db(query, data)
+  session['user'] = new_user
+  return True
 
-    if not passwordNumRegEx.search(session['password']) :
-      error = True
-      flash("Password must contain at least 1 number")    
-
-    if error == True :
-      return redirect('/')
-
-    return render_template('result.html')
-app.run(debug=True) # run our server
-
+app.run(debug=True) # run our servers

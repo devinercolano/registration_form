@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Registration Form</title>
+	<title>Users</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Registration Form</h1>
+    <h1>Add a new user</h1>
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <ul class='flashes'>
@@ -15,13 +15,12 @@
             </ul>
         {% endif %}
     {% endwith %}
-    <form action='/submit' method='post'>
-        Email : <input type='email' name='email'>
+
+    <form action='/users/new' method='post'>
         First Name : <input type='text' name='firstName'>
         Last Name : <input type='text' name='lastName'>
-        Password : <input type='password' name='password'>
-        Confirm Password: <input type='password' name='confirmPassword'>
-        <input type='submit' value='submit'>
+        Email : <input type='email' name='email'>
+        <input type='submit' value='create'>
     </form>
 </body>
 </html>
