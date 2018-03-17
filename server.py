@@ -14,8 +14,6 @@ def index():
   query = 'SELECT * FROM friends'
   friends = mysql.query_db(query)
 
- 
-
   return render_template("/users.html", friend_list=friends)
 
 @app.route('/users/new', methods=['POST'])
@@ -58,7 +56,7 @@ def addUser():
       return redirect('/')      
 
     create_user(request)
-    return render_template('/users/new.html')
+    return render_template('/users/new')
     
 def create_user(request):
   query = "INSERT INTO friends (email, first_name, last_name, created_at, updated_at) VALUES (:email, :first_name, :last_name, NOW(), NOW())"
