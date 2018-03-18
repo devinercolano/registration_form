@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Edit Friend</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Edit Friend</h1>
+    {% for friend in user %}
+
+        <div>
+            <ul>
+                <li>{{ friend['first_name'] }}</li>
+                <li>{{ friend['last_name'] }}</li>
+                <li>{{ friend['email'] }}</li>
+            </ul>
+        </div>
+        {% endfor %}
+
+        <form action='/users/{{ user[0]['id'] }}' method="POST">
+            <label for="first_name">First Name: <input type="text" name="first_name" id="first_name"></label>
+            <label for="last_name">Last Name: <input type="text" name="last_name" id="last_name"></label>
+            <label for="email">Email: <input type="text" name="email" id="email"></label>
+            <input type="submit" name="submit" value="Update">
+        </form>
+    <a href="/users">Go Back</a>
+</body>
+</html>

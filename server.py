@@ -13,8 +13,11 @@ app.secret_key = 'KeepItSecretKeepItSafe'
 def index():
   query = 'SELECT * FROM friends'
   friends = mysql.query_db(query)
-
   return render_template("/users.html", friend_list=friends)
+
+@app.route('/users/new')
+def addUserPage():
+  return render_template("/new.html")
 
 @app.route('/users/new', methods=['POST'])
 def addUser():
@@ -51,12 +54,12 @@ def addUser():
         if x['email'] == request.form['email'] :
             flash("Error! Duplicate email", 'incorrect')
             errorFlag = True
-            return render_template('index.html')
+            return render_template('users.html')
     if errorFlag == True :
-      return redirect('/')      
+      return redirect('/users')      
 
     create_user(request)
-    return render_template('/users/new')
+    return render_template('/users.html')
     
 def create_user(request):
   query = "INSERT INTO friends (email, first_name, last_name, created_at, updated_at) VALUES (:email, :first_name, :last_name, NOW(), NOW())"
@@ -69,5 +72,34 @@ def create_user(request):
   new_user = mysql.query_db(query, data)
   session['user'] = new_user
   return True
+
+@app.route('/friends/<id>/edit')
+def edit(id):
+    query = "SELECT * FROM friends WHERE id = :friend_id LIMIT 1"
+    data = {
+        "friend_id": id
+    }
+    friend = mysql.query_db(query, data)
+    return render_template("/edit.html", user=friend)
+
+@app.route('/users/<id>', methods=['POST'])
+def update(friend_id):
+    query = "UPDATE friends SET first_name = :first_name, last_name = :last_name, updated_at=NOW() WHERE id = :id LIMIT 1"
+    data = {
+             'first_name': request.form['first_name'],
+             'last_name':  request.form['last_name'],
+             'email': request.form['email'],
+             'id': id
+           }
+    mysql.query_db(query, data)
+    return render_template('/edit.html', )
+@app.route('/users/<id>/delete', methods=['POST'])
+def destroy(id):
+  query = 'DELETE FROM friends WHERE id = :friend_id'
+  data = {
+          'friend_id': id
+    }
+  mysql.query_db(query, data)
+  return redirect('/users')
 
 app.run(debug=True) # run our servers

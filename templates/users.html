@@ -19,7 +19,13 @@
                 <td>{{friend['first_name']}} {{friend['last_name']}}</td>
                 <td>{{friend['email']}}</td>
                 <td>{{friend['created_at']}}</td>
-                <td>Action</td>
+                <td>                        
+                    <a href="/users/{{ friend['id'] }}/edit"><button>Edit</button></a>
+                    <form action="/users/{{ friend['id'] }}/delete" method="POST">
+                        <input type="submit" name="delete" value="Delete">
+                    </form>
+                </td>
+
             </tr>
         {% endfor %}
     </table>
